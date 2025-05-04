@@ -1,36 +1,43 @@
 # Nombre del flujo de trabajo
 name: .NET Build and Test
 
-# Disparadores
+# Disparadores: Ejecutar en push a main y en Pull Requests a main
 on:
   push:
-    branches: [ main ]
+    branches: [ main ] # Confirma que 'main' es tu rama principal, si no, usa 'master'
   pull_request:
-    branches: [ main ]
+    branches: [ main ] # Confirma que 'main' es tu rama principal, si no, usa 'master'
 
 jobs:
+  # Nombre del trabajo
   build-and-test:
+    # Ejecutor a usar
     runs-on: ubuntu-latest
 
+    # Pasos a ejecutar
     steps:
-    # 1. Descargar código
-    - name: Checkout repository code
-      uses: actions/checkout@v4
+      # 1. Descarga (Checkout) el código fuente del repositorio
+      - name: Checkout repository code
+        uses: actions/checkout@v4
 
-    # 2. Configurar .NET SDK
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x' # Verifica tu versión
+      # 2. Configura el entorno de .NET SDK
+      #    ¡IMPORTANTE! Verifica que la versión coincida con tu proyecto
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x' # Cambia si usas .NET 6, 7, etc.
 
-    # 3. Restaurar dependencias (CORREGIDO)
-    - name: Restore dependencies
-      run: dotnet restore TaskFlowApi.sln # Especifica el archivo .sln
+      # 3. Restaura las dependencias NuGet usando el archivo de solución
+      #    ¡IMPORTANTE! Verifica el nombre exacto de tu archivo .sln
+      - name: Restore dependencies
+        run: dotnet restore TaskFlowApi.sln # Nombre exacto del archivo .sln
 
-    # 4. Compilar solución (CORREGIDO)
-    - name: Build solution
-      run: dotnet build TaskFlowApi.sln --configuration Release --no-restore # Especifica el archivo .sln
+      # 4. Compila la solución en modo Release usando el archivo de solución
+      #    ¡IMPORTANTE! Verifica el nombre exacto de tu archivo .sln
+      - name: Build solution
+        run: dotnet build TaskFlowApi.sln --configuration Release --no-restore
 
-    # 5. Ejecutar pruebas (Esta línea ya especificaba el proyecto, está bien)
-    - name: Run unit tests
-      run: dotnet test TaskFlowApi.Tests/TaskFlowApi.Tests.csproj --configuration Release --no-build --verbosity normal
+      # 5. Ejecuta las pruebas unitarias
+      #    ¡IMPORTANTE! Verifica la ruta exacta a tu archivo .csproj de pruebas
+      - name: Run unit tests
+        run: dotnet test TaskFlowApi.Tests/TaskFlowApi.Tests.csproj --configuration Release --no-build --verbosity normal
