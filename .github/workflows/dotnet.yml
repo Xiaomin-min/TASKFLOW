@@ -1,0 +1,40 @@
+# Nombre del flujo de trabajo
+name: .NET Build and Test
+
+# Disparadores: Ejecutar en push a main y en Pull Requests a main
+on:
+  push:
+    branches: [ main ] # Asegúrate que tu rama principal se llama 'main' (o cámbiala a 'master')
+  pull_request:
+    branches: [ main ] # Asegúrate que tu rama principal se llama 'main' (o cámbiala a 'master')
+
+jobs:
+  build-and-test:
+    # Usar el último runner estable de Ubuntu
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Descarga (Checkout) tu código del repositorio
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      # 2. Configura el entorno de .NET SDK
+      #    IMPORTANTE: Asegúrate que '8.0.x' coincide con la versión de .NET de tu proyecto
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # 3. Restaura las dependencias NuGet
+      #    Asume que el archivo .sln está en la raíz del repo
+      - name: Restore dependencies
+        run: dotnet restore
+
+      # 4. Compila la solución en modo Release
+      - name: Build solution
+        run: dotnet build --configuration Release --no-restore
+
+      # 5. Ejecuta las pruebas unitarias
+      #    IMPORTANTE: Verifica que la ruta al archivo .csproj de pruebas sea correcta
+      - name: Run unit tests
+        run: dotnet test TaskFlowApi.Tests/TaskFlowApi.Tests.csproj --configuration Release --no-build --verbosity normal
