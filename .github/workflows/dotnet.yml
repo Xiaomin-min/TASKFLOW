@@ -1,4 +1,4 @@
-name: .NET Build Test (API Only)
+name: .NET Build and Test
 
 on:
   push:
@@ -7,24 +7,23 @@ on:
     branches: [ main ]
 
 jobs:
-  build-api:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository code
-        uses: actions/checkout@v4
+    - name: Checkout repository code
+      uses: actions/checkout@v4
 
-      - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x' # Verifica tu versión
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x' # Verifica tu versión
 
-      # Restaura SOLO el proyecto principal (asumiendo que está en la raíz)
-      - name: Restore Main API Project Dependencies
-        run: dotnet restore TaskFlowApi.csproj
+    - name: Restore dependencies
+      run: dotnet restore TaskFlowApi.sln # Usa el .sln ahora
 
-      # Compila SOLO el proyecto principal (asumiendo que está en la raíz)
-      - name: Build Main API Project
-        run: dotnet build TaskFlowApi.csproj --configuration Release --no-restore
+    - name: Build solution
+      run: dotnet build TaskFlowApi.sln --configuration Release --no-restore # Usa el .sln ahora
 
-      # --- ¡Hemos quitado el paso de ejecutar pruebas por ahora! ---
+    - name: Run unit tests
+      run: dotnet test TaskFlowApi.Tests/TaskFlowApi.Tests.csproj --configuration Release --no-build --verbosity normal # Verifica ruta
