@@ -25,11 +25,11 @@ jobs:
 
     # 3. Restaurar dependencias (CORREGIDO)
     - name: Restore dependencies
-      run: dotnet restore TaskFLOW.sln # Especifica el archivo .sln
+      run: dotnet restore TaskFlowApi.sln # Especifica el archivo .sln
 
     # 4. Compilar solución (CORREGIDO)
     - name: Build solution
-      run: dotnet build TaskFLOW.sln --configuration Release --no-restore # Especifica el archivo .sln
+      run: dotnet build TaskFlowApi.sln --configuration Release --no-restore # Especifica el archivo .sln
 
     # 5. Ejecutar pruebas (Esta línea ya especificaba el proyecto, está bien)
     - name: Run unit tests
